@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Club — Weekly Problem Set</title>
+<meta name="description" content="Weekly physics, biology, and psychology problems from Physics Club.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Literata:opsz,wght@18..144,400;18..144,500;18..144,600&family=Caveat:wght@600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS — change these to re-theme the whole site
+     ============================================================ */
+  :root{
+    --paper:        #F3F1E6;   /* page background, like cream engineering paper */
+    --grid:         #CFE3D2;   /* faint sage grid lines */
+    --margin-rule:  #E3B7B0;   /* soft red margin rule, like ruled notebook paper */
+    --card-bg:      #FFFDF6;   /* individual worksheet card background */
+    --ink:          #232C39;   /* primary text */
+    --ink-soft:     #5B6472;   /* secondary text */
+    --ink-faint:    #9AA2AC;   /* tertiary / placeholder text */
+
+    --physics:      #2A5FCB;   /* instrument blue */
+    --physics-bg:   #E8EEFC;
+    --biology:      #2F8F5B;   /* leaf green */
+    --biology-bg:   #E7F4EC;
+    --psychology:   #7A4FCB;   /* synapse violet */
+    --psychology-bg:#EFE8FA;
+    --amber:        #E2A33B;   /* highlighter accent — pins, tape, current-week marker */
+
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(35,44,57,0.06), 0 6px 18px rgba(35,44,57,0.07);
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Literata', Georgia, serif;
+    --font-hand: 'Caveat', cursive;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--font-body);
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: -1px -1px;
+    line-height: 1.5;
+  }
+
+  a{ color: var(--physics); }
+
+  .wrap{
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ---------------- header ---------------- */
+  header{
+    padding: 56px 0 28px;
+    position: relative;
+  }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+  h1.title{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(38px, 6vw, 58px);
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .pinned-note{
+    display: inline-block;
+    margin-top: 22px;
+    padding: 10px 18px 12px;
+    background: var(--card-bg);
+    border: 1px solid rgba(35,44,57,0.08);
+    border-radius: 2px;
+    box-shadow: var(--shadow);
+    transform: rotate(-2deg);
+    font-family: var(--font-hand);
+    font-size: 22px;
+    color: var(--ink);
+    position: relative;
+  }
+  .pinned-note::before{
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 28px;
+    width: 46px;
+    height: 16px;
+    background: var(--amber);
+    opacity: 0.85;
+    transform: rotate(-4deg);
+  }
+
+  /* ---------------- subject tabs ---------------- */
+  .tabs{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 32px 0 8px;
+  }
+  .tab{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1.5px solid transparent;
+    background: var(--card-bg);
+    color: var(--ink-soft);
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: transform 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .tab:hover{ transform: translateY(-1px); }
+  .tab:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+  .tab[data-active="true"][data-subject="all"]{ border-color: var(--ink); color: var(--ink); }
+  .tab[data-active="true"][data-subject="physics"]{ border-color: var(--physics); color: var(--physics); background: var(--physics-bg); }
+  .tab[data-active="true"][data-subject="biology"]{ border-color: var(--biology); color: var(--biology); background: var(--biology-bg); }
+  .tab[data-active="true"][data-subject="psychology"]{ border-color: var(--psychology); color: var(--psychology); background: var(--psychology-bg); }
+
+  /* ---------------- section headings ---------------- */
+  .section-head{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 44px 0 18px;
+  }
+  .section-head h2{
+    font-family: var(--font-display);
+    font-size: 22px;
+    margin: 0;
+  }
+  .section-head .meta{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------------- problem card ---------------- */
+  .week-block{ margin-bottom: 6px; }
+
+  .problem-card{
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    padding: 20px 22px 20px 40px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: rise 0.5s ease forwards;
+  }
+  .problem-card.is-hidden{ display: none; }
+
+  /* spiral-notebook perforation along the left margin */
+  .problem-card::before{
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: 16px;
+    width: 1px;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0, transparent 6px,
+      rgba(35,44,57,0.16) 6px, rgba(35,44,57,0.16) 7px,
+      transparent 7px, transparent 18px
+    );
+  }
+  .problem-card::after{
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: 9px;
+    width: 14px;
+    background-image: radial-gradient(circle, rgba(35,44,57,0.14) 2.4px, transparent 2.6px);
+    background-size: 14px 18px;
+    background-position: 0 4px;
+  }
+
+  .card-top{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .subject-badge{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  .subject-badge[data-subject="physics"]{ background: var(--physics-bg); color: var(--physics); }
+  .subject-badge[data-subject="biology"]{ background: var(--biology-bg); color: var(--biology); }
+  .subject-badge[data-subject="psychology"]{ background: var(--psychology-bg); color: var(--psychology); }
+
+  .difficulty{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
+  }
+  .difficulty .dot{ color: var(--ink); }
+
+  .question{
+    font-size: 17px;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  details.answer{ margin-top: 12px; }
+  details.answer summary{
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+    padding: 4px 0;
+  }
+  details.answer summary::-webkit-details-marker{ display: none; }
+  details.answer summary::before{
+    content: "▸";
+    display: inline-block;
+    transition: transform 0.15s ease;
+    color: var(--amber);
+  }
+  details.answer[open] summary::before{ transform: rotate(90deg); }
+  details.answer summary:focus-visible{ outline: 2px solid var(--amber); outline-offset: 3px; }
+  details.answer summary:hover{ color: var(--ink); }
+  .answer-body{
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: linear-gradient(transparent 60%, rgba(226,163,59,0.28) 60%);
+    background-color: rgba(35,44,57,0.03);
+    border-left: 2px solid var(--amber);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* ---------------- archive ---------------- */
+  details.week-archive{
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    padding: 16px 20px;
+    transform: rotate(var(--tilt, -0.6deg));
+    transition: transform 0.2s ease;
+  }
+  details.week-archive:hover{ transform: rotate(0deg); }
+  details.week-archive:nth-of-type(odd){ --tilt: 0.6deg; }
+  details.week-archive summary{
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 16px;
+  }
+  details.week-archive summary::-webkit-details-marker{ display: none; }
+  details.week-archive summary .arrow{
+    font-family: var(--font-mono);
+    color: var(--ink-faint);
+    transition: transform 0.15s ease;
+  }
+  details.week-archive[open] summary .arrow{ transform: rotate(90deg); }
+  details.week-archive summary .wdate{
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+  details.week-archive .archive-body{ margin-top: 16px; padding-left: 2px; }
+  details.week-archive .problem-card{ animation: none; opacity: 1; transform: none; }
+
+  /* ---------------- footer ---------------- */
+  footer{
+    margin-top: 60px;
+    padding-top: 22px;
+    border-top: 1px dashed rgba(35,44,57,0.18);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @keyframes rise{
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    .problem-card{ animation: none; opacity: 1; transform: none; }
+    details.week-archive{ transform: none; }
+    .tab, details.answer summary::before{ transition: none; }
+  }
+
+  @media (max-width: 560px){
+    .wrap{ padding: 0 16px 60px; }
+    header{ padding-top: 40px; }
+    .problem-card{ padding: 18px 16px 18px 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Physics · Biology · Psychology</p>
+    <h1 class="title">Physics Club</h1>
+    <div class="pinned-note">new set posted every week</div>
+  </header>
+
+  <nav class="tabs" id="tabs" aria-label="Filter by subject">
+    <button class="tab" data-subject="all">All</button>
+    <button class="tab" data-subject="physics">Physics</button>
+    <button class="tab" data-subject="biology">Biology</button>
+    <button class="tab" data-subject="psychology">Psychology</button>
+  </nav>
+
+  <section aria-labelledby="current-week-heading">
+    <div class="section-head">
+      <h2 id="current-week-heading">This week's set</h2>
+      <span class="meta" id="current-week-meta"></span>
+    </div>
+    <div class="week-block" id="current-week"></div>
+  </section>
+
+  <section aria-labelledby="archive-heading">
+    <div class="section-head">
+      <h2 id="archive-heading">Past sets</h2>
+    </div>
+    <div id="archive"></div>
+  </section>
+
+  <footer>
+    <span>Physics Club — weekly problem set</span>
+    <span>Edit the WEEKS array in the code to publish a new one</span>
+  </footer>
+
+</div>
+
+<script>
+/* ================================================================
+   EDIT QUESTIONS HERE
+   ================================================================
+   Add a new week by copying a block below and pasting it at the
+   TOP of the WEEKS array (so it becomes the new current week).
+   Set the old "current" week's `current` flag to false — it will
+   automatically move into "Past sets".
+
+   Fields per problem:
+     subject:    "physics" | "biology" | "psychology"
+     difficulty: 1 (easy), 2 (medium), or 3 (hard)
+     question:   string — can include plain text, ^2 for squared etc.
+     answer:     string — shown when "Show answer" is clicked
+   ================================================================ */
+
+const WEEKS = [
+  {
+    id: "week-1",
+    label: "Week 1",
+    date: "Aug 18, 2026",
+    current: true,
+    problems: [
+      {
+        subject: "physics",
+        difficulty: 2,
+        question: "A ball is launched horizontally at 15 m/s from the top of a 20 m cliff. How far from the base of the cliff does it land? (Ignore air resistance, g = 9.8 m/s².)",
+        answer: "Fall time: t = √(2h/g) = √(40/9.8) ≈ 2.02 s. Horizontal distance: x = v·t = 15 × 2.02 ≈ 30.3 m from the base."
+      },
+      {
+        subject: "physics",
+        difficulty: 3,
+        question: "A uniform solid disk (moment of inertia I = ½MR²) rolls without slipping down a ramp of height h, starting from rest. Find its speed at the bottom in terms of g and h.",
+        answer: "Energy conservation: Mgh = ½Mv² + ½Iω², and for rolling without slipping ω = v/R, so ½Iω² = ¼Mv². This gives Mgh = ¾Mv², so v = √(4gh/3)."
+      },
+      {
+        subject: "biology",
+        difficulty: 1,
+        question: "A cell is placed in a hypertonic solution. What happens to it, and why?",
+        answer: "The cell loses water and shrinks (crenation in animal cells, plasmolysis in plant cells). Water moves by osmosis from the region of lower solute concentration (inside the cell) to the region of higher solute concentration (outside)."
+      },
+      {
+        subject: "biology",
+        difficulty: 2,
+        question: "Sickle cell trait (heterozygous) persists at high frequency in regions where malaria is endemic, even though sickle cell disease (homozygous) is harmful. Why?",
+        answer: "This is heterozygote advantage: carriers of one sickle allele have increased resistance to malaria, giving them a survival edge in malaria-endemic regions. Balancing selection keeps the allele common even though homozygotes are harmed."
+      },
+      {
+        subject: "psychology",
+        difficulty: 1,
+        question: "In Pavlov's classic experiment, dogs learned to salivate at the sound of a bell. Identify the unconditioned stimulus, the conditioned stimulus, and the conditioned response.",
+        answer: "Unconditioned stimulus: food. Conditioned stimulus: the bell. Conditioned response: salivating to the bell alone (the unconditioned response was salivating to the food)."
+      },
+      {
+        subject: "psychology",
+        difficulty: 3,
+        question: "In Milgram-style obedience studies, participants often continued administering shocks because of the experimenter's lab coat and repeated verbal prods. Which concept best explains this, and why does it work?",
+        answer: "Obedience to authority. Cues of legitimate authority (a lab coat, calm/repeated instructions, physical proximity of the authority figure) increase compliance, and small step-by-step escalation makes it easier to keep going even against personal moral judgment."
+      }
+    ]
+  },
+  {
+    id: "week-0",
+    label: "Week 0 — sample archive",
+    date: "Aug 11, 2026",
+    current: false,
+    problems: [
+      {
+        subject: "physics",
+        difficulty: 1,
+        question: "A 2 kg cart moving at 3 m/s collides with a stationary 1 kg cart and they stick together. What is their combined velocity right after the collision?",
+        answer: "Momentum is conserved: (2 × 3 + 1 × 0) / (2 + 1) = 6/3 = 2 m/s in the original direction of motion."
+      },
+      {
+        subject: "biology",
+        difficulty: 2,
+        question: "Why can't muscle cells sustain intense activity using only anaerobic respiration for very long?",
+        answer: "Anaerobic respiration (fermentation) produces far less ATP per glucose molecule than aerobic respiration, and it causes lactic acid to build up, which lowers pH and impairs muscle function — so it can only be sustained briefly."
+      },
+      {
+        subject: "psychology",
+        difficulty: 2,
+        question: "What is the difference between negative reinforcement and punishment in operant conditioning?",
+        answer: "Negative reinforcement removes an unpleasant stimulus to increase a behavior (e.g., a seatbelt alarm stops when you buckle up). Punishment applies a consequence to decrease a behavior. Both can involve removing or adding something — the key difference is whether the behavior increases or decreases."
+      }
+    ]
+  }
+  // Add more week objects above this line.
+];
+
+const SUBJECT_LABEL = { physics: "Physics", biology: "Biology", psychology: "Psychology" };
+const DIFF_LABEL = { 1: "Easy", 2: "Medium", 3: "Hard" };
+
+function difficultyDots(level){
+  let dots = "";
+  for(let i = 1; i <= 3; i++){
+    dots += `<span class="dot">${i <= level ? "●" : "○"}</span>`;
+  }
+  return dots;
+}
+
+function renderProblemCard(p, delay){
+  return `
+    <article class="problem-card" data-subject="${p.subject}" style="animation-delay:${delay}ms">
+      <div class="card-top">
+        <span class="subject-badge" data-subject="${p.subject}">${SUBJECT_LABEL[p.subject]}</span>
+        <span class="difficulty" aria-label="Difficulty: ${DIFF_LABEL[p.difficulty]}">${difficultyDots(p.difficulty)} ${DIFF_LABEL[p.difficulty]}</span>
+      </div>
+      <p class="question">${p.question}</p>
+      <details class="answer">
+        <summary>Show answer</summary>
+        <div class="answer-body">${p.answer}</div>
+      </details>
+    </article>
+  `;
+}
+
+function render(){
+  const current = WEEKS.find(w => w.current) || WEEKS[0];
+  const archived = WEEKS.filter(w => w !== current);
+
+  document.getElementById("current-week-meta").textContent = `${current.label} · ${current.date}`;
+  document.getElementById("current-week").innerHTML =
+    current.problems.map((p, i) => renderProblemCard(p, i * 60)).join("");
+
+  document.getElementById("archive").innerHTML = archived.map(week => `
+    <details class="week-archive">
+      <summary>
+        <span>${week.label} <span class="arrow">▸</span></span>
+        <span class="wdate">${week.date}</span>
+      </summary>
+      <div class="archive-body">
+        ${week.problems.map(p => renderProblemCard(p, 0)).join("")}
+      </div>
+    </details>
+  `).join("");
+
+  applyFilter(document.querySelector('.tab[data-active="true"]')?.dataset.subject || "all");
+}
+
+function applyFilter(subject){
+  document.querySelectorAll(".problem-card").forEach(card => {
+    const match = subject === "all" || card.dataset.subject === subject;
+    card.classList.toggle("is-hidden", !match);
+  });
+}
+
+document.getElementById("tabs").addEventListener("click", (e) => {
+  const btn = e.target.closest(".tab");
+  if(!btn) return;
+  document.querySelectorAll(".tab").forEach(t => t.dataset.active = "false");
+  btn.dataset.active = "true";
+  applyFilter(btn.dataset.subject);
+});
+
+document.querySelector('.tab[data-subject="all"]').dataset.active = "true";
+render();
+</script>
+
+</body>
+</html>
