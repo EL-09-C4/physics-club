@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Club & SHNS — Weekly Problem Set</title>
+<meta name="description" content="Weekly physics, biology, and psychology problems from Physics Club & SHNS.">
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS — change these to re-theme the whole site
+     ============================================================ */
+  :root{
+    --paper:        #FAFAFA;   /* page background — plain, near white */
+    --grid:         #E6E6E6;   /* faint neutral grid lines */
+    --card-bg:      #FFFFFF;   /* individual worksheet card background */
+    --ink:          #1A1A1A;   /* primary text */
+    --ink-soft:     #555555;   /* secondary text */
+
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.10);
+    --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-mono: 'Courier New', Courier, monospace;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--font-body);
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: -1px -1px;
+    line-height: 1.5;
+  }
+
+  a{ color: var(--ink); text-decoration: underline; }
+
+  .wrap{
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ---------------- header ---------------- */
+  header{
+    padding: 56px 0 28px;
+    position: relative;
+  }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+  h1.title{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(38px, 6vw, 58px);
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .subtitle{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin: 10px 0 0;
+  }
+
+  /* ---------------- section headings ---------------- */
+  .section-head{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 44px 0 18px;
+  }
+  .section-head h2{
+    font-family: var(--font-display);
+    font-size: 22px;
+    margin: 0;
+  }
+  .section-head .meta{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------------- problem card ---------------- */
+  .week-block{ margin-bottom: 6px; }
+
+  .problem-card{
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    padding: 20px 22px 20px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* spiral-notebook perforation along the left margin */
+  .problem-card::before{
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: 16px;
+    width: 1px;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0, transparent 6px,
+      rgba(35,44,57,0.16) 6px, rgba(35,44,57,0.16) 7px,
+      transparent 7px, transparent 18px
+    );
+  }
+  .problem-card::after{
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: 9px;
+    width: 14px;
+    background-image: radial-gradient(circle, rgba(35,44,57,0.14) 2.4px, transparent 2.6px);
+    background-size: 14px 18px;
+    background-position: 0 4px;
+  }
+
+  .card-top{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .subject-badge{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.25);
+    color: var(--ink);
+  }
+
+  .question{
+    font-size: 17px;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  details.answer{ margin-top: 12px; }
+  details.answer summary{
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+    padding: 4px 0;
+  }
+  details.answer summary::-webkit-details-marker{ display: none; }
+  details.answer summary::before{
+    content: "▸";
+    display: inline-block;
+    transition: transform 0.15s ease;
+    color: var(--ink);
+  }
+  details.answer[open] summary::before{ transform: rotate(90deg); }
+  details.answer summary:focus-visible{ outline: 2px solid var(--ink); outline-offset: 3px; }
+  details.answer summary:hover{ color: var(--ink); }
+  .answer-body{
+    margin-top: 8px;
+    padding: 12px 14px;
+    background-color: rgba(0,0,0,0.045);
+    border-left: 2px solid var(--ink);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* ---------------- week heading ---------------- */
+  .week-heading{
+    margin: 0 0 18px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+  }
+  .week-heading h3{
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  /* ---------------- footer ---------------- */
+  footer{
+    margin-top: 60px;
+    padding-top: 22px;
+    border-top: 1px dashed rgba(35,44,57,0.18);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: #2E3744;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    .tab, details.answer summary::before{ transition: none; }
+  }
+
+  @media (max-width: 560px){
+    .wrap{ padding: 0 16px 60px; }
+    header{ padding-top: 40px; }
+    .problem-card{ padding: 18px 16px 18px 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <h1 class="title">Physics Club &amp; SHNS</h1>
+    <p class="subtitle">Physics · Biology · Psychology</p>
+  </header>
+
+  <section aria-label="Current problem set">
+    <div id="weeks"></div>
+  </section>
+
+  <footer>
+    <span>Physics Club &amp; SHNS — weekly problem set</span>
+  </footer>
+
+</div>
+
+<script>
+/* ================================================================
+   EDIT QUESTIONS HERE
+   ================================================================
+   To publish a new week, just replace the label and the problems
+   array below with your new set.
+
+   Fields per problem:
+     subject:    "physics" | "biology" | "psychology"
+     question:   string — can include plain text, ^2 for squared etc.
+     answer:     string — shown when "Show answer" is clicked
+   ================================================================ */
+
+const CURRENT_WEEK = {
+  label: "Week 2",
+  problems: [
+    {
+      subject: "physics",
+      question: "A spring with spring constant k = 200 N/m is compressed 0.15 m and used to launch a 0.5 kg block along a frictionless surface. What is the block's launch speed?",
+      answer: "Energy stored in the spring: ½kx² = ½(200)(0.15)² = 2.25 J. Setting this equal to kinetic energy: ½mv² = 2.25, so v² = 2(2.25)/0.5 = 9, giving v = 3 m/s."
+    },
+    {
+      subject: "physics",
+      question: "Two point charges, +4 μC and −4 μC, sit 0.3 m apart in a vacuum. What is the magnitude of the electric force between them? (k = 8.99×10⁹ N·m²/C²)",
+      answer: "F = k|q₁q₂|/r² = (8.99×10⁹)(4×10⁻⁶ × 4×10⁻⁶)/(0.3)² = (8.99×10⁹)(1.6×10⁻¹¹)/0.09 ≈ 1.6 N, attractive since the charges are opposite."
+    },
+    {
+      subject: "biology",
+      question: "What is the primary function of mitochondria in a eukaryotic cell?",
+      answer: "They generate ATP through aerobic respiration, converting the chemical energy in glucose into a usable energy form for the cell — hence the nickname 'powerhouse of the cell.'"
+    },
+    {
+      subject: "biology",
+      question: "Why do enzymes lose their function at very high temperatures?",
+      answer: "High heat breaks the hydrogen bonds and other weak interactions holding an enzyme's three-dimensional shape together, causing it to denature. Since an enzyme's function depends on a precisely shaped active site, a denatured enzyme can no longer bind its substrate effectively."
+    },
+    {
+      subject: "psychology",
+      question: "How do short-term memory and long-term memory differ in terms of capacity and duration?",
+      answer: "Short-term memory holds a limited amount of information (roughly 7±2 items) for a brief period — seconds up to about a minute — unless it's actively rehearsed. Long-term memory can store a much larger amount of information for extended periods, potentially a lifetime."
+    },
+    {
+      subject: "psychology",
+      question: "After making a difficult decision, people often start viewing their chosen option more favorably and the rejected option more negatively. What concept explains this, and why does it happen?",
+      answer: "This is post-decision cognitive dissonance reduction. Choosing between two appealing options creates internal tension over what was given up, so people adjust their attitudes after the fact — exaggerating the chosen option's benefits and the rejected option's downsides — to feel more at ease with the decision."
+    }
+  ]
+};
+
+const SUBJECT_LABEL = { physics: "Physics", biology: "Biology", psychology: "Psychology" };
+
+function renderProblemCard(p){
+  return `
+    <article class="problem-card" data-subject="${p.subject}">
+      <div class="card-top">
+        <span class="subject-badge" data-subject="${p.subject}">${SUBJECT_LABEL[p.subject]}</span>
+      </div>
+      <p class="question">${p.question}</p>
+      <details class="answer">
+        <summary>Show answer</summary>
+        <div class="answer-body">${p.answer}</div>
+      </details>
+    </article>
+  `;
+}
+
+function render(){
+  document.getElementById("weeks").innerHTML = `
+    <div class="week-heading">
+      <h3>${CURRENT_WEEK.label}</h3>
+    </div>
+    <div class="week-block">
+      ${CURRENT_WEEK.problems.map(p => renderProblemCard(p)).join("")}
+    </div>
+  `;
+}
+
+render();
+</script>
+
+</body>
+</html>
